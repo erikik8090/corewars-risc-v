@@ -261,13 +261,12 @@ public class InstructionRunner {
      * Register x0 can be used as the destination if the result is not required
      */
     public void jalr(InstructionFormatI i) throws MisalignedMemoryLoadException {
-        state.setReg(i.getRd(), state.getPc() + 4);
-        jump(state, state.getReg(i.getRs1()) + i.getImmediate());
+        jalr(i, 4);
     }
 
     public void jalr(InstructionFormatI i, int instructionSize) throws MisalignedMemoryLoadException {
         state.setReg(i.getRd(), state.getPc() + instructionSize);
-        jump(state, state.getReg(i.getRs1()) + i.getImmediate(), instructionSize);
+        jumpAbsolute(state, state.getReg(i.getRs1()) + i.getImmediate(), instructionSize);
     }
 
     /**
@@ -327,5 +326,13 @@ public class InstructionRunner {
 
     private void jump(CpuStateRiscV state, int immediate) throws MisalignedMemoryLoadException {
         jump(state, immediate, 4);
+    }
+    
+    private void jumpAbsolute(CpuStateRiscV state, int immediate, int instructionSize) throws MisalignedMemoryLoadException {
+        state.setPc(immediate - instructionSize);
+    }
+    
+    private void jumpAbsolute(CpuStateRiscV state, int immediate) throws MisalignedMemoryLoadException {
+        jumpAbsolute(state, immediate, 4);
     }
 }
